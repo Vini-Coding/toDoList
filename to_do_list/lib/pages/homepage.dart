@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:to_do_list/models/task.dart';
 import 'package:to_do_list/widgets/task_item.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,7 +11,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController taskController = TextEditingController();
-  List<String> tasks = [];
+  List<Task> tasks = [];
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,8 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () {
                         setState(() {
                           String text = taskController.text;
-                          tasks.add(text);
+                          Task newTask = Task(title: text, dateTime: DateTime.now());
+                          tasks.add(newTask);
                         });
                         taskController.clear();
                       },
@@ -63,11 +65,10 @@ class _HomePageState extends State<HomePage> {
                   child: ListView(
                     shrinkWrap: true,
                     children: [
-                      for (String task in tasks)
+                      for (Task task in tasks)
                         TaskItem(
-                          title: task,
+                          task: task,
                         )
-                      //ADD PARAMETER
                     ],
                   ),
                 ),
@@ -77,7 +78,8 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   children: [
                     Expanded(
-                      child: Text('Você possui ${tasks.length} tarefas pendentes'),
+                      child:
+                          Text('Você possui ${tasks.length} tarefas pendentes'),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
