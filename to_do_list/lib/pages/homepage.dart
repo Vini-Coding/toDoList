@@ -42,7 +42,8 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () {
                         setState(() {
                           String text = taskController.text;
-                          Task newTask = Task(title: text, dateTime: DateTime.now());
+                          Task newTask =
+                              Task(title: text, dateTime: DateTime.now());
                           tasks.add(newTask);
                         });
                         taskController.clear();
@@ -68,6 +69,7 @@ class _HomePageState extends State<HomePage> {
                       for (Task task in tasks)
                         TaskItem(
                           task: task,
+                          onComplete: onComplete,
                         )
                     ],
                   ),
@@ -78,13 +80,12 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   children: [
                     Expanded(
-                      child:
-                          Text('Você possui ${tasks.length} tarefas pendentes'),
+                      child: Text('There is ${tasks.length} tasks left'),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {},
-                      child: const Text('Limpar tudo'),
+                      child: const Text('Clean all'),
                       style: ElevatedButton.styleFrom(
                         primary: const Color(0xff00d7f3),
                         padding: const EdgeInsets.all(14),
@@ -98,5 +99,11 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void onComplete(Task task) {
+    setState(() {
+      tasks.remove(task);
+    });
   }
 }
