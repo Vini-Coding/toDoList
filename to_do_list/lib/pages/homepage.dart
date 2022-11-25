@@ -12,6 +12,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController taskController = TextEditingController();
   List<Task> tasks = [];
+  Task? deletedTask;
+  int? deletedTaskIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +104,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onComplete(Task task) {
+    deletedTask = task;
+    deletedTaskIndex = tasks.indexOf(task);
+
     setState(() {
       tasks.remove(task);
     });
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: const Color.fromARGB(255, 222, 242, 243),
+        duration: const Duration(seconds: 5),
+        content: Text(
+          'Task ${task.title} completed succesfully.',
+          style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+        ),
+        action: SnackBarAction(
+          label: 'Undone',
+          textColor: const Color.fromARGB(255, 0, 52, 59),
+          onPressed: () {
+            setState(() {
+              tasks.insert(deletedTaskIndex!, deletedTask!);
+            });
+          },
+        ),
+      ),
+    );
   }
 }
