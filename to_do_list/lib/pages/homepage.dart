@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: showDeleteTasksConfirmationDialog,
                       child: const Text('Clean all'),
                       style: ElevatedButton.styleFrom(
                         primary: const Color(0xff00d7f3),
@@ -129,6 +129,36 @@ class _HomePageState extends State<HomePage> {
             });
           },
         ),
+      ),
+    );
+  }
+
+  void showDeleteTasksConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Clean all Tasks?'),
+        content: const Text(
+            'Are you sure that you want to clean all the Tasks of your To-Do List?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: TextButton.styleFrom(primary: const Color(0xff00d7f3)),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                tasks.clear();
+              });
+            },
+            style: TextButton.styleFrom(primary: Colors.red),
+            child: const Text('Clean All'),
+          ),
+        ],
       ),
     );
   }
