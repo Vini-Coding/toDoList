@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:to_do_list/models/task.dart';
+import 'package:to_do_list/repositories/tasks_list_repository.dart';
 import 'package:to_do_list/widgets/task_item.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController taskController = TextEditingController();
+  final TasksListRepository tasksListRepository = TasksListRepository();
   List<Task> tasks = [];
   Task? deletedTask;
   int? deletedTaskIndex;
@@ -48,6 +50,7 @@ class _HomePageState extends State<HomePage> {
                               Task(title: text, dateTime: DateTime.now());
                           tasks.add(newTask);
                         });
+                        tasksListRepository.saveTaksList(tasks);
                         taskController.clear();
                       },
                       child: const Icon(
