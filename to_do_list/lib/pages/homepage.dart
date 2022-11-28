@@ -16,11 +16,35 @@ class _HomePageState extends State<HomePage> {
   List<Task> tasks = [];
   Task? deletedTask;
   int? deletedTaskIndex;
+  String? errorText;
+
+  @override
+  void initState() {
+    super.initState();
+
+    tasksListRepository.getTaskList().then((value) {
+      setState(() {
+        tasks = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'To-Do List',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 30,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: const Color(0xff00d7f3),
+        ),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -32,10 +56,20 @@ class _HomePageState extends State<HomePage> {
                     Expanded(
                       child: TextField(
                         controller: taskController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
                           labelText: "Add a Task",
                           hintText: "Ex. Study Flutter",
+                          errorText: errorText,
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xff00d7f3),
+                              width: 2,
+                            ),
+                          ),
+                          labelStyle: const TextStyle(
+                            color: Color(0xff00d7f3),
+                          ),
                         ),
                       ),
                     ),
@@ -44,14 +78,22 @@ class _HomePageState extends State<HomePage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
+                        String text = taskController.text;
+                        if (text.isEmpty) {
+                          setState(() {
+                            errorText = "The task can not be empty";
+                          });
+                          return;
+                        }
+
                         setState(() {
-                          String text = taskController.text;
                           Task newTask =
                               Task(title: text, dateTime: DateTime.now());
                           tasks.add(newTask);
+                          errorText = null;
                         });
-                        tasksListRepository.saveTaksList(tasks);
                         taskController.clear();
+                        tasksListRepository.saveTasksList(tasks);
                       },
                       child: const Icon(
                         Icons.add,
@@ -113,6 +155,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       tasks.remove(task);
     });
+    tasksListRepository.saveTasksList(tasks);
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -130,6 +173,7 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               tasks.insert(deletedTaskIndex!, deletedTask!);
             });
+            tasksListRepository.saveTasksList(tasks);
           },
         ),
       ),
@@ -157,6 +201,7 @@ class _HomePageState extends State<HomePage> {
               setState(() {
                 tasks.clear();
               });
+              tasksListRepository.saveTasksList(tasks);
             },
             style: TextButton.styleFrom(primary: Colors.red),
             child: const Text('Clean All'),

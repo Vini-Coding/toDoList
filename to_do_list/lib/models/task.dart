@@ -1,6 +1,8 @@
 class Task {
   Task({required this.title, required this.dateTime});
 
+  Task.fromJson(Map<String, dynamic> json) : title = json['title'], dateTime = DateTime.parse(json['dateTime']);
+  
   String title;
   DateTime dateTime;
 

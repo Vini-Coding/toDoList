@@ -2,15 +2,20 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list/models/task.dart';
 
-class TasksListRepository {
-  TasksListRepository() {
-    SharedPreferences.getInstance().then((value) => sharedPreferences = value);
-  }
+const tasksListKey = 'tasks_list';
 
+class TasksListRepository {
   late SharedPreferences sharedPreferences;
 
-  void saveTaksList(List<Task> tasks) {
+  Future<List<Task>> getTaskList() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    final String jsonString = sharedPreferences.getString(tasksListKey) ?? '[]';
+    final List jsonDecoded = json.decode(jsonString) as List;
+    return jsonDecoded.map((e) => Task.fromJson(e)).toList();
+  }
+
+  void saveTasksList(List<Task> tasks) {
     final String jsonString = json.encode(tasks);
-    sharedPreferences.setString('tasks_list', jsonString);
+    sharedPreferences.setString(tasksListKey, jsonString);
   }
 }
